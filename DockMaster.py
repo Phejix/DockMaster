@@ -101,7 +101,7 @@ class DockMaster(object):
         if len(docked_ship_ids) > 0:
             return docked_ship_ids[0]
         else:
-            raise ShipLimitError("No Free Ships Available")
+            raise ValueError("No Free Ships Available")
 
     def check_sailing_ships(self):
         if len(self.port.get_sailing_ship_ids()) > 0:
@@ -114,7 +114,7 @@ class DockMaster(object):
         del temp[key]
         return temp
 
-    def post_job(self, job, results_storage):
+    def post_job(self, job, storage_function, storage_kwarg_dictionary):
         """
         Parameters:
             job: A Job object found in job.py in the DockMaster directory
@@ -126,9 +126,6 @@ class DockMaster(object):
 
         Attaches a job to be processed to the DockMaster's queue.
         """
-        self.results_storage = results_storage
+        self.results_storage = {'storage_function' : storage_function, 'storage_kwarg_dictionary' : storage_kwarg_dictionary}
         self.job_queue.put(item = job, block = True, timeout = 1)
         return True
-            
-class ShipLimitError(Exception):
-    pass
